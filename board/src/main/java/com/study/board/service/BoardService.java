@@ -1,9 +1,12 @@
 package com.study.board.service;
 
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.study.board.entity.Board;
 import com.study.board.repository.BoardRepository;
@@ -15,7 +18,22 @@ public class BoardService {
 	private BoardRepository boardRepository; // Dependency Injection
 
 	// 글 작성 처리
-	public void write(Board board) {
+	public void write(Board board, MultipartFile file) throws Exception {
+
+		String projectPath = System.getProperty("user.dir") + "/src/main/webapp/"; // 프로젝트 경로를
+		// 담아줌
+
+		UUID uuid = UUID.randomUUID(); // 식별자
+
+		String fileName = uuid + "_" + file.getOriginalFilename();
+
+		File saveFile = new File(projectPath, fileName);
+
+		file.transferTo(saveFile);
+
+		board.setFilename(fileName);
+		board.setFilepath("/webapp/" + fileName);
+
 		boardRepository.save(board);
 	}
 
