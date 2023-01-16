@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.study.board.entity.Board;
@@ -44,5 +45,31 @@ public class BoardController {
 		model.addAttribute("board", boardService.boardView(id));
 
 		return "boardview";
+	}
+
+	@GetMapping("/board/delete")
+	public String boardDelete(Integer id) {
+		boardService.boardDelete(id);
+
+		return "redirect:/board/list";
+	}
+
+	// PathVariable : GetMapping의 id 부분을 인식해서, id 라는 Integer 변수에 담
+	@GetMapping("/board/modify/{id}")
+	public String boardModify(@PathVariable("id") Integer id, Model model) {
+		model.addAttribute("board", boardService.boardView(id));
+		return "boardmodify";
+	}
+
+	@PostMapping("/board/update/{id}")
+	public String boardUpdate(@PathVariable("id") Integer id, Board board) {
+
+		Board boardTemp = boardService.boardView(id);
+		boardTemp.setTitle(board.getTitle());
+		boardTemp.setContent(board.getContent());
+
+		boardService.write(boardTemp);
+
+		return "redirect:/board/list";
 	}
 }
