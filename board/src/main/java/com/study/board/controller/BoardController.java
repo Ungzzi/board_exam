@@ -23,11 +23,14 @@ public class BoardController {
 	}
 
 	@PostMapping("/board/writepro")
-	public String boardWritePro(Board board) {
+	public String boardWritePro(Board board, Model model) {
 
 		boardService.write(board);
 
-		return "";
+		model.addAttribute("message", "글 작성이 완료되었습니다.");
+		model.addAttribute("searchUrl", "/board/list");
+
+		return "message";
 	}
 
 	@GetMapping("/board/list")
@@ -48,10 +51,12 @@ public class BoardController {
 	}
 
 	@GetMapping("/board/delete")
-	public String boardDelete(Integer id) {
+	public String boardDelete(Integer id, Model model) {
 		boardService.boardDelete(id);
 
-		return "redirect:/board/list";
+		model.addAttribute("message", "게시글이 삭제되었습니다.");
+		model.addAttribute("searchUrl", "/board/list");
+		return "message";
 	}
 
 	// PathVariable : GetMapping의 id 부분을 인식해서, id 라는 Integer 변수에 담
@@ -62,7 +67,7 @@ public class BoardController {
 	}
 
 	@PostMapping("/board/update/{id}")
-	public String boardUpdate(@PathVariable("id") Integer id, Board board) {
+	public String boardUpdate(@PathVariable("id") Integer id, Board board, Model model) {
 
 		Board boardTemp = boardService.boardView(id);
 		boardTemp.setTitle(board.getTitle());
@@ -70,6 +75,9 @@ public class BoardController {
 
 		boardService.write(boardTemp);
 
-		return "redirect:/board/list";
+		model.addAttribute("message", "글 수정이 완료되었습니다.");
+		model.addAttribute("searchUrl", "/board/list");
+
+		return "message";
 	}
 }
